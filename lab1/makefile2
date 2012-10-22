@@ -1,0 +1,8 @@
+objects = invert.o
+
+invert: $(objects)
+	cc -o invert $(objects)
+
+
+clean:
+	rm invert $(objects)

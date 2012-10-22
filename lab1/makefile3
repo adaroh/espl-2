@@ -1,0 +1,9 @@
+SOURCES=invert.c
+OBJECTS=$(SOURCES:.c=.o)
+EXECUTABLE=invert
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	cc $(OBJECTS) -o $@
+	-rm -rf *.o
