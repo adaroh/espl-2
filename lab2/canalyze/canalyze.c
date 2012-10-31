@@ -4,6 +4,15 @@
 #include "namelist.h"
 #include <string.h>
 
+cmpstringp(const void *p1, const void *p2) {
+           /* The actual arguments to this function are "pointers to
+              pointers to char", but strcmp(3) arguments are "pointers
+              to char", hence the following cast plus dereference */
+   return strcmp(
+     ((struct namestat * )p1)->name           ,
+     ((struct namestat * )p2)->name
+   );
+       }
 int main(int argc, char **argv) {
   char* words[] = { "auto","double","int","long", "break","else","long","switch", "case","enum","register","typedef", "char","extern","return","union", "const","float","short","unsigned", "continue","for","signed","void", "default","goto","sizeof","volatile", "do","if","static","while" };
   
@@ -32,7 +41,7 @@ int main(int argc, char **argv) {
   
   
   //size_t structs_len = sizeof(nl) / sizeof(struct st_ex);
-  qsort((nl->names), (nl->size), sizeof(struct namestat), strcmp);
+  qsort((nl->names), (nl->size), sizeof(struct namestat), cmpstringp);
   int i;
   for (i=0; i!=nl->size; i++) {
     printf ("%s %d\n", nl->names[i].name , nl->names[i].count);
@@ -40,3 +49,5 @@ int main(int argc, char **argv) {
   
   return 0;
 }
+
+

@@ -10,8 +10,10 @@
 
 /** single name statistics */
 struct namestat {
+  		int count;              /* number of occurences */
+
 	char name[NAMELEN];     /* the name */
-	int count;              /* number of occurences */
+
 };
 
 /** list of name statistics */

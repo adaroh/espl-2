@@ -15,6 +15,19 @@ char *fgetname(char *name, int size, FILE *stream) {
 		ch = fgetc(stream);
 		if(ch==EOF) /* end of stream or error before a name */
 			return NULL;
+		if(ch=='#') {
+		  for(;fgetc(stream)!='\n';);
+		  continue;
+		} if (ch=='/') {
+		   ch = fgetc(stream);
+		   if (ch=='/') {
+		      for(;fgetc(stream)!='\n';);
+		      continue;
+		   } else if (ch=='*') {
+		      for(;fgetc(stream)!='/';);
+		      continue;
+		   }
+		}
 		if(isalpha(ch) || ch=='_') /* a name begins */
 			break; 
 	}
