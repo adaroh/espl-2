@@ -28,6 +28,6 @@ int main(int argc, char **argv) {
     fgets(str, 128, file);
   }
 //  printf("Randomed line:\n");
-  printf("%d: %s", (randNum+1), str);
+  printf("%d: %s", randNum, str);
   return 0;
 }
