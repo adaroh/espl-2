@@ -1,11 +1,11 @@
 %.o: %.c
 	gcc -c -o $@ $<
 
-all: fortune
+all: xsum
 
 clean:
 	rm -f *.o
  
-fortune: fortune.o
+xsum: xsum.o
 	cc -o $@ $^
  
