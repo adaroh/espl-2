@@ -10,7 +10,8 @@ int main(int argc, char **argv) {
   }
   int xflag = 0;
   int opt;
-  while ((opt = getopt(argc, argv, "hx")) != -1) {
+  int size = 0;
+  while ((opt = getopt(argc, argv, "hxb:")) != -1) {
       switch (opt) {
       case 'h':
 	printf("OPTIONS\n\t-h  print a summary of options and exit\n\t-x  print the checksum as a hexadecimal rather than decimal number.\n");
@@ -18,25 +19,22 @@ int main(int argc, char **argv) {
 	break;
       case 'x':
 	xflag = 1;
-	  break;
+	break;
+      case 'b':
+	size = atoi(optarg);
+	break;
       default: /* '?' */
-	fprintf(stderr, "Usage: %s [-x] [-h] filename\n", argv[0]);
+	fprintf(stderr, "Usage: %s [-x] [-h] [-b SIZE] filename\n", argv[0]);
 	exit(EXIT_FAILURE);
       }
   }
   
-  if (optind >= argc) {
-      fprintf(stderr, "Expected File Name after options\n");
-      exit(EXIT_FAILURE);
-  }
-
   FILE *file = fopen(argv[argc-1],"r");
-  unsigned int word=0;
-  unsigned int xsum=0;
-  fread(&xsum,1,sizeof(xsum),file);
-  while(fread(&word, 1, sizeof(word), file)) {
+  unsigned int word;
+  unsigned int xsum;
+  fread(&xsum,sizeof(xsum),1,file);
+  while(fread(&word, sizeof(word), 1, file)) {
     xsum ^= word;
-    word=0;
   }
   if (xflag==0) {
     printf("Checksum is %d\n",xsum);
@@ -47,6 +45,4 @@ int main(int argc, char **argv) {
   
   
   return 0;
-}
-
-
+} 

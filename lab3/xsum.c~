@@ -32,8 +32,8 @@ int main(int argc, char **argv) {
 
   FILE *file = fopen(argv[argc-1],"r");
   unsigned int word=0;
-  unsigned int xsum=0;
-  fread(&xsum,1,sizeof(xsum),file);
+  unsigned int xsum;
+  fread(&xsum,sizeof(xsum),1,file);
   while(fread(&word, 1, sizeof(word), file)) {
     xsum ^= word;
     word=0;

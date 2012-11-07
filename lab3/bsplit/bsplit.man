@@ -1,0 +1,28 @@
+BSPLIT(1)           Extended System Programming Laboratory           BSPLIT(1)
+
+
+
+NNAAMMEE
+       bsplit - split a binary file into several chunks
+
+SSYYNNOOPPSSIISS
+       bbsspplliitt [_O_P_T_I_O_N_S] _F_I_L_E
+
+DDEESSCCRRIIPPTTIIOONN
+       Splits  FILE into several chunks of at most the specified size FILE.01,
+       FILE.02, FILE.03 etc. Prepends each chunk with the four-byte  XOR-based
+       checksum for integrity control.
+
+OOPPTTIIOONNSS
+       --bb _S_I_Z_E     put at most SIZE bytes per output file
+
+       --hh          print summary of options and exit
+
+       --xx          print the checksum of FILE on the standard output
+
+SSEEEE AALLSSOO
+       bmerge(1)
+
+
+
+Ben Gurion University of the Negev   2012                            BSPLIT(1)

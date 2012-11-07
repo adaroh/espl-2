@@ -31,12 +31,11 @@ int main(int argc, char **argv) {
   }
 
   FILE *file = fopen(argv[argc-1],"r");
-  unsigned int word=0;
-  unsigned int xsum=0;
-  fread(&xsum,1,sizeof(xsum),file);
-  while(fread(&word, 1, sizeof(word), file)) {
+  unsigned int word;
+  unsigned int xsum;
+  fread(&xsum,sizeof(xsum),1,file);
+  while(fread(&word, sizeof(word), 1, file)) {
     xsum ^= word;
-    word=0;
   }
   if (xflag==0) {
     printf("Checksum is %d\n",xsum);
