@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
   }
   
   //checksum
-//    merge(firstPart, filename,1);
+    merge(firstPart, filename,(i-1));
     printf("last i=%d\n", i);
     FILE *file = fopen(argv[argc-1],"r");
     unsigned int word=0;
@@ -86,13 +86,14 @@ int main(int argc, char **argv) {
     if (xflag==1) {
       printf("Checksum is %d\n",xsum);
     }
-    /*
+    //*
     FILE *xsumFile = fopen(firstPart, "a");
-    fseek(xsumFile, 0, SEEK_SET);
+//    fseek(xsumFile, 0, SEEK_SET);
+    printf("sizeofxsum=%lu\n",sizeof(xsum));
     fwrite(&xsum, 1, sizeof(xsum), xsumFile);
     fclose(xsumFile);
     //
-    */
+    //*/
     
   return 0;
 }

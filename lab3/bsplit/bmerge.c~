@@ -69,8 +69,8 @@ int main(int argc, char **argv) {
       lastFile=0;
     } else {
 	while ((sizeRead = fread(&aPart , 1 , size , pfile))) {
-	    fwrite(aPart, 1, sizeRead, sfile);
-	    //printf("i=%d size written =%d\n",i,sizeRead);
+	    if (sizeRead<size) fwrite(aPart, 1, sizeRead-4, sfile); 
+	    else fwrite(aPart, 1, sizeRead, sfile);
 	    aPart[0]=0;
 	}	
 	fclose (pfile);
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     unsigned int word=0;
     unsigned int xsum=0;
     fread(&xsum,1 ,sizeof(xsum),file);
-    printf("xsum 1=%x\n",xsum);
+    printf("xsum=%x\n",xsum);
     while(fread(&word,1, sizeof(word), file)) {
       xsum ^= word;
       word =0;
