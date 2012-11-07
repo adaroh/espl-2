@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   while ((opt = getopt(argc, argv, "hxb:")) != -1) {
       switch (opt) {
       case 'h':
-	printf("OPTIONS\n\t-h  print a summary of options and exit\n\t-x  print the checksum as a hexadecimal rather than decimal number.\n");
+	printf("OPTIONS\n\t-b SIZE\tput at most SIZE bytes per output file\n\t-h\tprint a summary of options and exit\n\t-x\tprint the checksum as a hexadecimal rather than decimal number.\n");
 	exit(0);
 	break;
       case 'x':
@@ -44,22 +44,26 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
   }
   
-  printf("size=%d\n",size);
+  //printf("size=%d\n",size);
   char *filename = argv[argc-1];
-  printf("filename=%s\n",filename);
+  //printf("filename=%s\n",filename);
   int len = strlen(filename)+7;
   int sizeRead = 0;
+  char firstPart[len];
+  firstPart[0]=0;
+  unsigned int zero = 0;
+  int i=1;
   if (size > 0) {
       FILE *sfile = fopen(argv[argc-1], "r");
-      int i=1;
       while (1) {
 	char partName[len];
 	partName[0]=0;
 	merge (partName, filename, i);
-	printf("part name=%s\n",partName);
+	//printf("part name=%s\n",partName);
 	char aPart [size];
 	if(!(sizeRead = fread(&aPart , 1 , size , sfile))) break;
 	FILE *pfile = fopen(partName, "w");
+	
 	fwrite(aPart, 1 , sizeRead, pfile);
 	fclose (pfile);
 	i++;
@@ -67,8 +71,9 @@ int main(int argc, char **argv) {
       fclose(sfile);
   }
   
-  
-  if (xflag==1) {
+  //checksum
+//    merge(firstPart, filename,1);
+    printf("last i=%d\n", i);
     FILE *file = fopen(argv[argc-1],"r");
     unsigned int word=0;
     unsigned int xsum=0;
@@ -77,9 +82,17 @@ int main(int argc, char **argv) {
       xsum ^= word;
       word =0;
     }
-    printf("Checksum is %d\n",xsum);
     fclose(file);
-  }
-  
+    if (xflag==1) {
+      printf("Checksum is %d\n",xsum);
+    }
+    /*
+    FILE *xsumFile = fopen(firstPart, "a");
+    fseek(xsumFile, 0, SEEK_SET);
+    fwrite(&xsum, 1, sizeof(xsum), xsumFile);
+    fclose(xsumFile);
+    //
+    */
+    
   return 0;
 }

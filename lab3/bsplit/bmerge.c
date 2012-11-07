@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   }
   int xflag = 0;
   int opt;
-  int size =4;
+  int size =1024;
   while ((opt = getopt(argc, argv, "hxb:")) != -1) {
       switch (opt) {
       case 'h':
@@ -62,14 +62,15 @@ int main(int argc, char **argv) {
     char partName[len];
     partName[0]=0;
     merge (partName, filename, i);
-    printf("part name=%s\n",partName);
+    //printf("part name=%s\n",partName);
     char aPart [size];
     FILE *pfile;
     if (!(pfile = fopen(partName, "r"))) {
       lastFile=0;
     } else {
-	while (!(sizeRead = fread(&aPart , 1 , size , pfile))){
-	    fwrite(aPart, 1 , sizeRead, sfile);
+	while ((sizeRead = fread(&aPart , 1 , size , pfile))) {
+	    fwrite(aPart, 1, sizeRead, sfile);
+	    //printf("i=%d size written =%d\n",i,sizeRead);
 	    aPart[0]=0;
 	}	
 	fclose (pfile);
@@ -78,18 +79,22 @@ int main(int argc, char **argv) {
   }
   fclose(sfile);
   
-  if (xflag==1) {
-    FILE *file = fopen(argv[argc-1],"r");
+  //checksum
+    printf("filename=%s\n",mainName);
+    FILE *file = fopen(mainName,"r");
     unsigned int word=0;
     unsigned int xsum=0;
     fread(&xsum,1 ,sizeof(xsum),file);
+    printf("xsum=%x\n",xsum);
     while(fread(&word,1, sizeof(word), file)) {
       xsum ^= word;
       word =0;
     }
-    printf("Checksum is %d\n",xsum);
     fclose(file);
-  }
-  
+    if (xflag==1) {
+      printf("Checksum is %d\n",xsum);
+    }
+    
+    
   return 0;
 }
