@@ -51,7 +51,10 @@ int main(int argc, char **argv) {
   int sizeRead = 0;
   char firstPart[len];
   firstPart[0]=0;
-  unsigned int zero = 0;
+  unsigned int word = 0;
+  unsigned int xsum = 0;
+  unsigned int part = 0;
+  int count;
   int i=1;
   if (size > 0) {
       FILE *sfile = fopen(argv[argc-1], "r");
@@ -60,17 +63,40 @@ int main(int argc, char **argv) {
 	partName[0]=0;
 	merge (partName, filename, i);
 	//printf("part name=%s\n",partName);
-	char aPart [size];
-	if(!(sizeRead = fread(&aPart , 1 , size , sfile))) break;
+	word = 0;
+	if(!(sizeRead = fread(&word , 1 , sizeof(word) , sfile))) break;
 	FILE *pfile = fopen(partName, "w");
+	part=word;
+	if (i==1) xsum=word;
+	else xsum ^= word;
+	fwrite(&word, 1 , sizeof(word), pfile);
+	fwrite(&word, 1 , sizeof(word), pfile);
+	count = sizeRead*2;
+	while (1) {
+	    word = 0;
+	    if(!((count<size)&&(sizeRead = fread(&word , 1 , sizeof(word) , sfile)))) break;
+	    xsum ^= word;
+	    part ^= word;
+	    count += sizeRead;
+	    fwrite(&word, 1 , sizeRead, pfile);
+	}
 	
-	fwrite(aPart, 1 , sizeRead, pfile);
+	fseek(pfile , 0 , SEEK_SET);
+	fwrite(&part , 1 , sizeof(part), pfile);
 	fclose (pfile);
+	//if (i==1) printf("part %d = %d\n" , i, part);
 	i++;
+	part = 0;
       }
       fclose(sfile);
   }
-  
+
+
+    if (xflag==1) {
+      printf("Checksum is %d\n",xsum);
+    }
+
+  /*
   //checksum
     merge(firstPart, filename,(i-1));
     printf("last i=%d\n", i);
@@ -93,7 +119,7 @@ int main(int argc, char **argv) {
     fwrite(&xsum, 1, sizeof(xsum), xsumFile);
     fclose(xsumFile);
     //
-    //*/
+    */
     
   return 0;
 }

@@ -58,27 +58,47 @@ int main(int argc, char **argv) {
   FILE *sfile = fopen(mainName, "w");
   int i=1;
   int lastFile = 1;
+  unsigned int part = 0;
+  unsigned int partRead = 0;
+  unsigned int xsum = 0;
+  unsigned int word = 0;
   while (lastFile) {
     char partName[len];
     partName[0]=0;
     merge (partName, filename, i);
     //printf("part name=%s\n",partName);
-    char aPart [size];
     FILE *pfile;
     if (!(pfile = fopen(partName, "r"))) {
       lastFile=0;
     } else {
-	while ((sizeRead = fread(&aPart , 1 , size , pfile))) {
-	    if (sizeRead<size) fwrite(aPart, 1, sizeRead-4, sfile); 
-	    else fwrite(aPart, 1, sizeRead, sfile);
-	    aPart[0]=0;
+	fread(&partRead , 1 , sizeof(partRead), pfile);
+	word = 0;
+	sizeRead = fread(&word, 1 , sizeof(word), pfile);
+	part = word;
+	if (i==1) xsum = word;
+	else xsum ^= word;
+	fwrite(&word, 1 , sizeRead, sfile);
+	word = 0;
+	while ((sizeRead = fread(&word , 1 , sizeof(word) , pfile))) {
+	    fwrite(&word, 1, sizeRead, sfile); 
+	    part ^= word;
+	    xsum ^= word;
+	    word = 0;
 	}	
 	fclose (pfile);
+	//if (i==1) printf("part %d = %d\n" , i, part);
+	//if (i==1) printf("part read %d = %d\n" , i , partRead);
+	if (part != partRead) printf("file %d corrupted\n" , i);
 	i++;
+	part = 0;
     }
   }
   fclose(sfile);
   
+  if (xflag==1) {
+      printf("Checksum is %d\n",xsum);
+  }
+  /*
   //checksum
     printf("filename=%s\n",mainName);
     FILE *file = fopen(mainName,"r");
@@ -94,7 +114,7 @@ int main(int argc, char **argv) {
     if (xflag==1) {
       printf("Checksum is %d\n",xsum);
     }
-    
+    */
     
   return 0;
 }
