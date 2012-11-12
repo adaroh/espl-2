@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   while ((opt = getopt(argc, argv, "hxb:")) != -1) {
       switch (opt) {
       case 'h':
-	printf("OPTIONS\n\t-b SIZE\tput at most SIZE bytes per output file\n\t-h\tprint a summary of options and exit\n\t-x\tprint the checksum as a hexadecimal rather than decimal number.\n");
+	printf("OPTIONS\n\t-b SIZE\tput at most SIZE bytes per output file\n\t-h\tprint a summary of options and exit\n\t-x\tprint the checksum of FILE on the standard output\n");
 	exit(0);
 	break;
       case 'x':

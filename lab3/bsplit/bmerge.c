@@ -26,17 +26,21 @@ int main(int argc, char **argv) {
   int xflag = 0;
   int opt;
   int size =1024;
-  while ((opt = getopt(argc, argv, "hxb:")) != -1) {
+  char *outputFilename = 0;
+  unsigned int xsumExpected = 0;
+  while ((opt = getopt(argc, argv, "ho:x:")) != -1) {
       switch (opt) {
       case 'h':
-	printf("OPTIONS\n\t-h  print a summary of options and exit\n\t-x  print the checksum as a hexadecimal rather than decimal number.\n");
+	printf("OPTIONS\n\t-h\t\tprint summary of options and exit\n\t-o OUTPUT\twrite the output into OUTPUT instead of PREFIX\n\t-x CHECKSUM\tverify that the checksum of the produced file is CHECKSUM\n");
 	exit(0);
 	break;
-      case 'x':
-	xflag = 1;
+      case 'o':
+	outputFilename = optarg;
+	//printf("filename received =%s\n",outputFilename);
 	break;
-      case 'b':
-	size = atoi(optarg);
+      case 'x':
+	xsumExpected = atoi(optarg);
+	//printf("xsumExpected =%d\n" , xsumExpected);
 	break;
       default: /* '?' */
 	fprintf(stderr, "Usage: %s [-x] [-h] [-b SIZE] filename\n", argv[0]);
@@ -54,7 +58,8 @@ int main(int argc, char **argv) {
   int sizeRead = 0;
   char mainName[len];
   mainName[0] = 0;
-  outputFileInFolder(mainName, argv[argc-1]);
+  if (!outputFilename) outputFilename = argv[argc-1];
+  outputFileInFolder(mainName, outputFilename);
   FILE *sfile = fopen(mainName, "w");
   int i=1;
   int lastFile = 1;
@@ -95,8 +100,9 @@ int main(int argc, char **argv) {
   }
   fclose(sfile);
   
-  if (xflag==1) {
-      printf("Checksum is %d\n",xsum);
+  if (xsumExpected!=0) {
+      if (xsumExpected==xsum) printf("Checksum match\n");
+      else printf("Checksum doesn't match:\nChecksum calculated=%d\t Checksum expected=%d\n",xsum,xsumExpected);
   }
   /*
   //checksum
