@@ -9,8 +9,6 @@ global strlen
 
 extern main
 _start:
-	push 	ebp
-	mov	ebp, esp
 	call	main
         mov     ebx,eax
 	mov	eax,1
@@ -19,6 +17,12 @@ _start:
 read:
 write:
 open:
+	mov	eax, 5
+	mov	ebx, [esp+4]
+	mov	ecx, [esp+8]
+	mov	edx, [esp+12]
+	int	0x80
+	ret
 close:
 strlen:
 	ret
