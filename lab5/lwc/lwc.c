@@ -21,11 +21,11 @@ void print(char *s);
 char *utoa(int);
 
 int main(int argc, char **argv) {
+	//print("main starting\n");
 	int inp;
 	int len;
 	char *b, *c;
 	int nlines = 0, nwords = 0, nchars = 0, in_word = 0;
-
 	switch(--argc) {
 	case 0: /* read from stdin by default */
 		inp = 0;
@@ -60,6 +60,7 @@ int main(int argc, char **argv) {
 			++nchars;
 		}
 	}
+
 	if(*(c-1)!='\n') /* unterminated last line */
 		++nlines;
 
