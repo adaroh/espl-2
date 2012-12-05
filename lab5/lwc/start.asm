@@ -16,7 +16,6 @@ _start:
         mov     ebx,eax
 	mov	eax,1
 	int 0x80
-
 read:
 	mov	eax, 3
 	mov	ebx, [esp+4]
