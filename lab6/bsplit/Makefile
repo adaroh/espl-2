@@ -14,7 +14,7 @@ bsplit: bsplit.o
 bmerge: bmerge.o
 	gcc -m32 -Wall -o bmerge bmerge.c
 
-bsplitasm: bsplitasm.o bsplit2.o 
+bsplitasm: bsplitasm.o
 	gcc -m32 -Wall -o $@ $^
 
 

@@ -7,20 +7,13 @@ global fcloser
 global fopenw
 global fwriter
 global innerloop
-
-extern main2
+extern strcat
 main:
-	;push ebp
-	;mov ebp,esp
-;	mov	eax, 5
-;	mov	ebx, [esp+8]
-;	mov	ecx, 0
-;	int	0x80	
-	call	main2
-        mov     ebx,eax
-	mov	eax,1
-	int 0x80
 
+	mov	DWORD eax, [esp+8]	;eax = argv
+	mov	eax, [eax+4]		;eax = argv[1]
+	mov	[filename],eax		;[filename] = second argument from command line
+	jmp	mainfunc
 fopenr:
 	mov	eax, 5
 	mov	ebx, [esp+4]
@@ -80,7 +73,7 @@ firstwhile:
 	add	esp,12
 	mov	DWORD [count], 4
 	mov	edx, [count]
-readbytes:
+readbytes:				; REMOVE ALL REGISTERS TESTS!!!!!!!!
 	push	DWORD 4
 	push	buffer 
 	push	DWORD [ebp+16]
@@ -126,14 +119,110 @@ filedone:
 	pop	ebp
 	ret
 	
+mainfunc:
+	mov	DWORD [sizeRead], 0
+	mov	DWORD [count], 0
+	mov	DWORD [fileindex], 1
+	mov	DWORD [flag], 1
+	push	DWORD 0
+	push	DWORD [filename]
+	call	fopenr		;open main file for reading
+	add	esp, 8
+	mov	[sfile], eax	;saves sfile number
+	mov	DWORD [done], 1
+mainloop:
+	cmp	DWORD [done],1
+	jne	mainends
+	mov	BYTE [partname], 0
+	push	DWORD [fileindex]
+	push	DWORD [filename]
+	push	DWORD partname
+	call	merge		;create new pfile name
+	add	esp, 12
+	push	DWORD 577
+	push	partname
+	call	fopenw
+	mov	[pfile], eax
+	mov	DWORD [count], 0
+	mov	DWORD [flag], 1
+	push	DWORD [sfile]
+	push	DWORD [pfile]
+	push	DWORD done
+	call innerloop
+	add	esp, 12
+	mov	[done], eax
+	mov	DWORD ebx, [fileindex]
+	inc	DWORD ebx
+	mov	[fileindex], ebx
+	jmp	mainloop
+mainends:
+	push	DWORD [sfile]
+	call	fcloser
+	add	esp, 4
+        mov     ebx,eax
+	mov	eax,1
+	int 0x80	
+
+merge:
+	mov	eax, [esp+4]
+	mov	ebx, [esp+8]
+	mov	ecx, [esp+12]
+	;add part/
+	push	DWORD part
+	push	DWORD partname
+	call	strcat
+	add	esp, 8
+	;add filename
+	push	DWORD [filename]
+	push	DWORD partname
+	call	strcat
+	add	esp, 8
+	;add dot
+	push	DWORD dot
+	push	DWORD partname
+	call	strcat
+	add	esp, 8
+
+	mov	eax, [fileindex]	; get file index
 	
+	xor	edx, edx
+	mov	esi, 10
+	idiv	esi
+	mov	esi, edx
+	add	esi, 48
+	mov	[seconddigit], esi	; get second digit of index
 	
+	xor	edx, edx
+	mov	esi, 10
+	idiv	esi
+	mov	esi, edx
+	add	esi, 48
+	mov	[firstdigit], esi	; get first digit of index
 	
-	
-	
+	;add index
+	push	DWORD firstdigit
+	push	DWORD partname
+	call	strcat
+	add	esp, 8
+	push	DWORD seconddigit
+	push	DWORD partname
+	call	strcat
+	add	esp, 8
+	ret
+
 section .data
 buffer TIMES 4 DB 0
 xsum DB 'aaaa'
 flag DD 1
+done DD 1
 count DD 0
 sizeRead DD 0
+filename RESB 100
+partname RESB 100
+fileindex DD 1
+sfile RESD 1
+pfile RESD 1
+part	DB	'part/',0
+dot	DB	'.',0
+firstdigit RESB	4
+seconddigit RESB 4
