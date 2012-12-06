@@ -7,7 +7,7 @@ int freadr(int fd, char *buf, int size);
 int fcloser(int fd);
 int fopenw(char *name, int flags);
 int fwriter(int fd, char *buf, int size);
-void innerloop(int *done, int pfile, int sfile);
+int innerloop(int *done, int pfile, int sfile);
 
 
 void merge(char *part, char* str, int num) {
@@ -63,7 +63,7 @@ int main2() {
   int pfile;
   int done = 1;
   
-  while ((done==1) && (i<3)) {
+  while ((done==1) && (i<15)) {
 	partname[0] = 0;
 	merge (partname, filename, i);
 	pfile = fopenw(partname, 577);
@@ -71,7 +71,8 @@ int main2() {
 	count=0;
 	flag=1;
 	printf("done=%d\npfile=%d\nsfile=%d\n",done,pfile,sfile);
-	innerloop(&done,pfile,sfile);
+	done = innerloop(&done,pfile,sfile);
+	printf("out\n");
 
 	i++;
   }
