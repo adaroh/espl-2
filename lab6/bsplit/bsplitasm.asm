@@ -73,21 +73,16 @@ firstwhile:
 	add	esp,12
 	mov	DWORD [count], 4
 	mov	edx, [count]
-readbytes:				; REMOVE ALL REGISTERS TESTS!!!!!!!!
+readbytes:
 	push	DWORD 4
 	push	buffer 
 	push	DWORD [ebp+16]
 	call	freadr
 	add	esp, 12
 	mov	DWORD edx, [count]
-	mov	DWORD ecx, [count]
 	add	edx, eax
-	mov	DWORD ecx, [count]
 	mov	DWORD [count], edx
-	mov	DWORD ecx, [count]
 	mov	DWORD [sizeRead], eax
-	mov	DWORD ecx, [count]
-	mov	DWORD ecx, [sizeRead]
 	cmp	eax, 0
 	jle	innerloopdone
 	mov	DWORD edx, [count]
@@ -148,7 +143,7 @@ mainloop:
 	push	DWORD [sfile]
 	push	DWORD [pfile]
 	push	DWORD done
-	call innerloop
+	call	innerloop
 	add	esp, 12
 	mov	[done], eax
 	mov	DWORD ebx, [fileindex]
