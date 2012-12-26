@@ -80,13 +80,23 @@ int main(int argc, char **argv) {
   printf("nchunks =%d\n", nchunks);
   int chunkind=1;
   int len = strlen(filename)+7;
+  pid_t pids[nchunks];
+  int i;
   for (chunkind = 1; chunkind <= nchunks; chunkind++) {
-    char partName[len];
-    partName[0]=0;
-    merge (partName, filename, chunkind);
-    copypart(filename, partName, ((chunkind-1)*(size-4)), (size-4));
-    
+      char partName[len];
+      partName[0]=0;
+      merge (partName, filename, chunkind);
+      pids[chunkind-1] = fork();
+      if (pids[chunkind-1] == -1) {
+	  perror("fork");
+	  exit(EXIT_FAILURE);
+      }
+      else if (pids[chunkind-1] == 0) {
+	  copypart(filename, partName, ((chunkind-1)*(size-4)), (size-4));
+	  return 0;
+      }
   }
+  
   
   return 0;
 }
