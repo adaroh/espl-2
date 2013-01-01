@@ -1,7 +1,7 @@
-All: secret-elf-dec secret-elf-enc
+All: dec enc
 
-secret-elf-dec: secret-elf-a secret-elf-c
+dec: secret-elf-a secret-elf-c
 	gcc -m32 -o $@ $^
 
-secret-elf-enc: secret-elf-b secret-elf-c
+enc: secret-elf-b secret-elf-c
 	gcc -m32 -o $@ $^

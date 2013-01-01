@@ -95,7 +95,7 @@ void free_args() {
 
 /* run an external program */
 void run_program() {
-  int pid, status
+  int pid, status;
   static char ststr[8];
 
   /* TODO: input, output redirection */
@@ -103,13 +103,39 @@ void run_program() {
   /* TODO: background commands */
 
   char **a = argv;
+  int dblexe = 0;
   while (*a) {
     if (**a == '|') {
-      **a = NULL;
-      int pidpre, pidpost;
-      inf fd[2];
-      
-  
+      dblexe = 1;
+      *a = 0;
+      ++a;
+      printf("argv[0]=%s\n",argv[0]);
+      printf("*a=%s\n",*a);
+      int pid;
+      int fd[2];
+      pipe(fd);
+      pid=fork();
+      //if(pid>0) waitpid(pid, &status, 0);
+      if (pid==0) {
+	close(fd[0]);
+	dup2(fd[1] , 1);
+	close(fd[1]);
+	execvp(argv[0] , argv);
+      } else {
+	pid=fork();
+	//if(pid>0) waitpid(pid, &status, 0);
+	if (pid==0) {
+	  close(fd[1]);
+	  dup2(fd[0] , 0);
+	  close(fd[0]);
+	  execvp(*a , a);
+	}
+      }
+      	//if(pid>0) waitpid(pid, &status, 0);
+    }
+    ++a;
+  }
+  //if (dblexe == 1) return;
   
   if((pid=fork())>0) {
     waitpid(pid, &status, 0);
