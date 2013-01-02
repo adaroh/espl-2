@@ -115,7 +115,6 @@ void run_program() {
       int fd[2];
       pipe(fd);
       pid=fork();
-      //if(pid>0) waitpid(pid, &status, 0);
       if (pid==0) {
 	close(fd[0]);
 	dup2(fd[1] , 1);
@@ -123,7 +122,6 @@ void run_program() {
 	execvp(argv[0] , argv);
       } else {
 	pid=fork();
-	//if(pid>0) waitpid(pid, &status, 0);
 	if (pid==0) {
 	  close(fd[1]);
 	  dup2(fd[0] , 0);
@@ -131,27 +129,29 @@ void run_program() {
 	  execvp(*a , a);
 	}
       }
-      	//if(pid>0) waitpid(pid, &status, 0);
+      close(fd[1]);
+      close(fd[0]);
+      waitpid(pid, &status, 0);
     }
     ++a;
   }
-  //if (dblexe == 1) return;
-  
-  if((pid=fork())>0) {
-    waitpid(pid, &status, 0);
-    sprintf(ststr, "%d", status);
-    setenv("?", ststr, 1);
-  } else if(pid==0) {
-    if ((argc>2) && (*(argv[argc-2]) == '>')) {
-      int fd = open(argv[argc-1] , O_WRONLY | O_CREAT | O_TRUNC , 0644);
-      dup2(fd, 1);
-      close(fd);
-      argv[argc-2] = NULL;
-    }
-    execvp(argv[0], argv);
-    perror(argv[0]);
-  } else {
-    perror(getenv("SHELL")); /* problem while forking, not due to a particular program */
+  if (dblexe == 0) {		// added
+      if((pid=fork())>0) {
+	waitpid(pid, &status, 0);
+	sprintf(ststr, "%d", status);
+	setenv("?", ststr, 1);
+      } else if(pid==0) {
+	if ((argc>2) && (*(argv[argc-2]) == '>')) {
+	  int fd = open(argv[argc-1] , O_WRONLY | O_CREAT | O_TRUNC , 0644);
+	  dup2(fd, 1);
+	  close(fd);
+	  argv[argc-2] = NULL;
+	}
+	execvp(argv[0], argv);
+	perror(argv[0]);
+      } else {
+	perror(getenv("SHELL")); /* problem while forking, not due to a particular program */
+      }
   }
 }
 
