@@ -1,5 +1,0 @@
-a.txt
-b.txt
-b.txt~
-pysh
-pysh~

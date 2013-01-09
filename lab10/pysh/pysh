@@ -31,7 +31,14 @@ def runprogram(argv):
     elif fdout is not sys.stdout:
 	fdout.close()
     return
-    
+
+def expand(argv):
+    for arg in argv:
+	if arg.startswith('$'):
+	    ind=argv.index(arg)
+	    argv[ind] = os.getenv(arg[1:])
+    return argv
+  
 while True:
     print "%s@%s>" % (getpass.getuser(), getcwd()),
 
@@ -54,8 +61,10 @@ while True:
             os.chdir(home)
         except OSError, s:
             print >>sys.stderr, "chdir: %s" % s
+    elif '=' in argv:
+	os.environ[argv[0]] = argv[2]
     else:
-	runprogram(argv)
+	runprogram(expand(argv))
 
 # goodbye message
 goodbye = "have a good sunny day, see you back soon"
