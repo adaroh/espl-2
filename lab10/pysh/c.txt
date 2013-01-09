@@ -1,0 +1,6 @@
+a.txt
+b.txt
+b.txt~
+c.txt
+pysh
+pysh~
